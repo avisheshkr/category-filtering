@@ -3,26 +3,34 @@ import Menu from "./components/Menu";
 import { data } from "./assets/data";
 import { useState } from "react";
 
-// Extract all categories from the data
 const allCategories = [
   "all",
   ...new Set(
-    data.map((menu) => {
-      return menu.category;
+    data.map((item) => {
+      return item.category;
     })
   ),
 ];
 
 function App() {
   const [menus, setMenus] = useState(data);
-  const [categories, setCategories] = useState(allCategories);
+  const [currentCategory, setCurrentCategory] = useState("all");
 
   const filterMenus = (category) => {
     if (category === "all") {
       setMenus(data);
+      setCurrentCategory("all");
     } else {
-      const newMenus = data.filter((menu) => menu.category === category);
+      const newMenus = data.filter((item) => item.category === category);
+      const activeCategory = [
+        ...new Set(
+          newMenus.map((item) => {
+            return item.category;
+          })
+        ),
+      ];
       setMenus(newMenus);
+      setCurrentCategory(activeCategory[0]);
     }
   };
 
@@ -31,9 +39,13 @@ function App() {
       <h1>Our Menu</h1>
       <hr />
       <ul className="category">
-        {categories.map((category, index) => {
+        {allCategories.map((category, index) => {
           return (
-            <li key={index} onClick={() => filterMenus(category)}>
+            <li
+              key={index}
+              onClick={() => filterMenus(category)}
+              className={category === currentCategory ? "activeCategory" : ""}
+            >
               {category}
             </li>
           );
